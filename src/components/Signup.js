@@ -1,7 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const Singup = () => {
+    let [emailState, setEmailState] = useState(false);
+    let [pwdState, setPwdState] = useState(false);
+
+    const emailCheck = function (string) {
+        setEmailState(/@/.test(string));
+    }
+
+    const pwdCheck = function (string) {
+        if (string.length > 7) {
+            setPwdState(true);
+        } else {
+            setPwdState(false);
+        };
+    }
+
     return (
         <Background>
             <Container>
@@ -10,13 +25,23 @@ const Singup = () => {
                 <form>
                     <Box margin="20px">
                         <label data-testid="email-input">email: </label>
-                        <input data-testid="email-input" type="email"/>
+                        <input 
+                            data-testid="email-input" 
+                            type="email"
+                            onChange={(e) => { emailCheck(e.target.value) }}
+                        />
+                        { emailState ? " OK" : " NOK" }
                     </Box>
                     <Box margin="20px">
                         <label data-testid="password-input">password: </label>
-                        <input data-testid="password-input" type="password"/>
+                        <input
+                            data-testid="password-input" 
+                            type="password"
+                            onChange={(e) => { pwdCheck(e.target.value) }}
+                        />
+                        { pwdState ? " OK" : " NOK" }
                     </Box>
-                    <StyledBtn type="submit">회원 가입</StyledBtn>
+                    <StyledBtn type="submit" disabled={!(emailState && pwdState)}>회원 가입</StyledBtn>
                 </form>
             </Container>
         </Background>
@@ -51,6 +76,10 @@ const StyledBtn = styled.button`
     color: #ffffff;
     border: none;
     border-radius: 5px;
+
+    &:disabled {
+        background-color: #868686;
+    }
 `
 
 export default Singup
