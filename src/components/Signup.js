@@ -1,20 +1,44 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import API from "../api/axios.js"
+import { useNavigate } from "react-router-dom";
 
 const Singup = () => {
     let [emailState, setEmailState] = useState(false);
     let [pwdState, setPwdState] = useState(false);
+    let [email, setEmail] = useState('');
+    let [password, setPassword] = useState('');
 
-    const emailCheck = function (string) {
+    const navigate = useNavigate();
+
+    const onEmailHandler = function (string) {
         setEmailState(/@/.test(string));
+        setEmail(string);
     }
 
-    const pwdCheck = function (string) {
+    const onPasswordHandler = function (string) {
+        setPassword(string);
         if (string.length > 7) {
             setPwdState(true);
         } else {
             setPwdState(false);
         };
+    }
+
+    const onSubmitHandler = async function (e) {
+        e.preventDefault();
+
+        let body = {
+            email: email,
+            password: password,
+        }
+        try {
+            const res = await API.post('/auth/signup', body);
+            alert('회원 가입이 완료 되었습니다!');
+            navigate('/');
+        } catch(error) {
+            console.error(error.response);
+        }
     }
 
     return (
@@ -28,7 +52,7 @@ const Singup = () => {
                         <input 
                             data-testid="email-input" 
                             type="email"
-                            onChange={(e) => { emailCheck(e.target.value) }}
+                            onChange={(e) => { onEmailHandler(e.target.value) }}
                         />
                         { emailState ? " OK" : " NOK" }
                     </Box>
@@ -37,11 +61,15 @@ const Singup = () => {
                         <input
                             data-testid="password-input" 
                             type="password"
-                            onChange={(e) => { pwdCheck(e.target.value) }}
+                            onChange={(e) => { onPasswordHandler(e.target.value) }}
                         />
                         { pwdState ? " OK" : " NOK" }
                     </Box>
-                    <StyledBtn type="submit" disabled={!(emailState && pwdState)}>회원 가입</StyledBtn>
+                    <StyledBtn 
+                        type="submit" 
+                        disabled={!(emailState && pwdState)}
+                        onClick={onSubmitHandler}    
+                    >회원 가입</StyledBtn>
                 </form>
             </Container>
         </Background>
