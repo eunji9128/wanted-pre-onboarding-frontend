@@ -3,7 +3,7 @@ import styled from "styled-components";
 import API from "../api/axios.js"
 import { useNavigate } from "react-router-dom";
 
-const Singup = () => {
+const Signup = () => {
     let [emailState, setEmailState] = useState(false);
     let [pwdState, setPwdState] = useState(false);
     let [email, setEmail] = useState('');
@@ -111,4 +111,4 @@ const StyledBtn = styled.button`
     }
 `
 
-export default Singup
+export default Signup
