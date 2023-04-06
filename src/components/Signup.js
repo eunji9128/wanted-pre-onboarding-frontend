@@ -35,7 +35,7 @@ const Singup = () => {
         try {
             const res = await API.post('/auth/signup', body);
             alert('회원 가입이 완료 되었습니다!');
-            navigate('/');
+            navigate('/signin');
         } catch(error) {
             console.error(error.response);
         }
