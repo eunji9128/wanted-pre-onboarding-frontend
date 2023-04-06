@@ -3,7 +3,11 @@ import styled from "styled-components";
 import API from "../api/axios.js"
 import { useNavigate } from "react-router-dom";
 
-const Singup = () => {
+// test account
+// email: test@email1234
+// pwd: test1234
+
+const Signin = () => {
     let [emailState, setEmailState] = useState(false);
     let [pwdState, setPwdState] = useState(false);
     let [email, setEmail] = useState('');
@@ -25,7 +29,7 @@ const Singup = () => {
         };
     }
 
-    const onSubmitHandler = async function (e) {
+    const onLoginHandler = async function (e) {
         e.preventDefault();
 
         let body = {
@@ -33,9 +37,15 @@ const Singup = () => {
             password: password,
         }
         try {
-            const res = await API.post('/auth/signup', body);
-            alert('회원 가입이 완료 되었습니다!');
-            navigate('/signin');
+            const res = await API.post('/auth/signin', body);
+            let loginData = {
+                ...body,
+                jwt: res.data.access_token,
+            }
+
+            localStorage.setItem('active_user', JSON.stringify(loginData))
+            alert('로그인이 완료 되었습니다!');
+            navigate('/todo');
         } catch(error) {
             console.error(error.response);
         }
@@ -44,8 +54,8 @@ const Singup = () => {
     return (
         <Background>
             <Container>
-                <h1>Sign-up page</h1>
-                <p>Join us our service!</p>
+                <h1>Sign-in page</h1>
+                <p>If you alreay sign-up, please login!</p>
                 <form>
                     <Box margin="20px">
                         <label data-testid="email-input">email: </label>
@@ -67,15 +77,15 @@ const Singup = () => {
                     </Box>
                     <StyledBtn 
                         type="submit" 
-                        data-testid="signup-button"
+                        data-testid="signin-button"
                         disabled={!(emailState && pwdState)}
-                        onClick={onSubmitHandler}    
-                    >회원 가입</StyledBtn>
+                        onClick={onLoginHandler}    
+                    >로그인</StyledBtn>
                 </form>
             </Container>
         </Background>
     )
-}
+};
 
 const Background = styled.div`
     width: 100vw;
@@ -111,4 +121,4 @@ const StyledBtn = styled.button`
     }
 `
 
-export default Singup
+export default Signin
