@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import API from "../api/axios.js"
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 
 // test account
 // email: test@email1234
 // pwd: test1234
+
+export async function loader() {
+    let isAuth = !!localStorage.getItem("active_user");
+    if (isAuth) return redirect('/todo');
+    return null;
+}
 
 const Signin = () => {
     let [emailState, setEmailState] = useState(false);

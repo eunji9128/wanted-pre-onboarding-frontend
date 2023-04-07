@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Signup from './pages/Signup';
-import Signin from './pages/Signin';
+import Signup, { loader as signupLoader } from './pages/Signup';
+import Signin, { loader as signinLoader } from './pages/Signin';
+import Todo, { loader as todoLoader } from './pages/Todo';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const router = createBrowserRouter([
@@ -17,14 +18,17 @@ const router = createBrowserRouter([
   {
     path: "signup",
     element: <Signup />,
+    loader: signupLoader,
   },
   {
     path: "signin",
     element: <Signin />,
+    loader: signinLoader,
   },
   {
     path: "todo",
-    element: <h1>todo</h1>,
+    element: <Todo />,
+    loader: todoLoader,
   }
 ]);
 
