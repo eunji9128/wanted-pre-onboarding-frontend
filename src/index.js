@@ -2,39 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Signup, { loader as signupLoader } from './pages/Signup';
-import Signin, { loader as signinLoader } from './pages/Signin';
-import Todo, { loader as todoLoader } from './pages/Todo';
 import reportWebVitals from './reportWebVitals';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    // errorElement: <ErrorPage />,
-  },
-  {
-    path: "signup",
-    element: <Signup />,
-    loader: signupLoader,
-  },
-  {
-    path: "signin",
-    element: <Signin />,
-    loader: signinLoader,
-  },
-  {
-    path: "todo",
-    element: <Todo />,
-    loader: todoLoader,
-  }
-]);
-
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <App />
   </React.StrictMode>
 );
 
