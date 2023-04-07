@@ -92,6 +92,7 @@ const Container = styled.div`
     margin: 5%;
     padding: 5% 0;
     background-color: #ffffff;
+    text-align: center;
 `
 
 const Box = styled.div`
