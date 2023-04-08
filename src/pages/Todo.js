@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { redirect } from "react-router";
+import API from "../api/axios";
 
 export async function loader() {
     let isAuth = !!localStorage.getItem("active_user");
@@ -12,6 +13,62 @@ export async function loader() {
 };
 
 const Todo = () => {
+    const [todoList, setTodoList] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
+                const res = await API.get('/todos', {
+                    headers: {"Authorization": `Bearer ${access_token}`},
+                });
+                setTodoList(res.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // const onListHandler = async function(e) {
+    //     const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
+    //     console.log(access_token);
+    //     try {
+    //         const res = await API.get('/todos', {
+    //             headers: {"Authorization": `Bearer ${access_token}`},
+    //         });
+    //         return res.data;
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // };
+    
+    const onCreateHandler = async function(e) {
+        const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
+        try {
+            const res = await API.post("/todos",
+                {
+                    todo: "todotest",
+                },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${access_token}`,
+                    },
+                }
+            );
+            console.log(res);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    
+    // useEffect (() => {
+    //     let tmp = onListHandler();
+    //     console.log(tmp);
+    // })
+
+    console.log('todo: ', todoList);
+
     let list = [
         {
             "id": 1,
@@ -24,7 +81,13 @@ const Todo = () => {
             "todo": "운동하기",
             "isCompleted": false,
             "userId": 1,
-        },        
+        },
+        {
+            "id": 3,
+            "todo": "운동하기2",
+            "isCompleted": false,
+            "userId": 1,
+        },   
     ];
 
     return (
@@ -34,7 +97,7 @@ const Todo = () => {
                 <StyledBtn data-testid="new-todo-add-button">추가</StyledBtn>
                 <Box>
                     {
-                        list.map(function (data, i) {
+                        todoList?.map(function (data, i) {
                             return (
                                 <li key={data.id}>
                                     <label style={{marginRight: "10px"}}>
