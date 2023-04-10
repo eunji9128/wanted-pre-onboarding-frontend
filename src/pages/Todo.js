@@ -29,26 +29,13 @@ const Todo = () => {
         };
         fetchData();
     }, []);
-
-    // const onListHandler = async function(e) {
-    //     const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
-    //     console.log(access_token);
-    //     try {
-    //         const res = await API.get('/todos', {
-    //             headers: {"Authorization": `Bearer ${access_token}`},
-    //         });
-    //         return res.data;
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // };
     
     const onCreateHandler = async function(e) {
         const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
         try {
             const res = await API.post("/todos",
                 {
-                    todo: "todotest",
+                    todo: e.target.newinput.value,
                 },
                 {
                     headers: {
@@ -61,40 +48,22 @@ const Todo = () => {
             console.error(err);
         }
     };
-    
-    // useEffect (() => {
-    //     let tmp = onListHandler();
-    //     console.log(tmp);
-    // })
 
     console.log('todo: ', todoList);
-
-    let list = [
-        {
-            "id": 1,
-            "todo": "과제하기",
-            "isCompleted": false,
-            "userId": 1,
-        },
-        {
-            "id": 2,
-            "todo": "운동하기",
-            "isCompleted": false,
-            "userId": 1,
-        },
-        {
-            "id": 3,
-            "todo": "운동하기2",
-            "isCompleted": false,
-            "userId": 1,
-        },   
-    ];
 
     return (
         <Background>
             <Container>
-                <input data-testid="new-todo-input" />
-                <StyledBtn data-testid="new-todo-add-button">추가</StyledBtn>
+                <form onSubmit={onCreateHandler}>
+                    <input 
+                        name="newinput"
+                        data-testid="new-todo-input"
+                    />
+                    <StyledBtn
+                        data-testid="new-todo-add-button"
+                        type="submit"
+                    >추가</StyledBtn>
+                </form>
                 <Box>
                     {
                         todoList?.map(function (data, i) {
