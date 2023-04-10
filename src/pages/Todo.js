@@ -14,6 +14,7 @@ export async function loader() {
 
 const Todo = () => {
     const [todoList, setTodoList] = useState([]);
+    const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,6 +23,7 @@ const Todo = () => {
                 const res = await API.get('/todos', {
                     headers: {"Authorization": `Bearer ${access_token}`},
                 });
+                console.log('get: ', res.data);
                 setTodoList(res.data);
             } catch (err) {
                 console.error(err);
@@ -31,7 +33,6 @@ const Todo = () => {
     }, []);
     
     const onCreateHandler = async function(e) {
-        const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
         try {
             const res = await API.post("/todos",
                 {
@@ -43,13 +44,42 @@ const Todo = () => {
                     },
                 }
             );
-            console.log(res);
+            console.log('create: ', res);
         } catch (err) {
             console.error(err);
         }
     };
 
-    console.log('todo: ', todoList);
+    const onUpdateHandler = async function(e, data) {
+        e.preventDefault();
+        const isCompleted = e.target.checked;
+        console.log('todocheck: ', isCompleted);
+        try {
+            const res = await API.put(`/todos/${data.id}`, 
+                {
+                    todo: data.todo,
+                    isCompleted: isCompleted,
+                },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${access_token}`,
+                    }
+                }
+            );
+            console.log('update: ', res);
+            setTodoList(todoList.map(todo => {
+                if (todo.id === data.id) {
+                  return {
+                    ...todo,
+                    isCompleted: isCompleted
+                  }
+                }
+                return todo;
+            }));
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     return (
         <Background>
@@ -68,14 +98,21 @@ const Todo = () => {
                     {
                         todoList?.map(function (data, i) {
                             return (
-                                <li key={data.id}>
-                                    <label style={{marginRight: "10px"}}>
-                                        <input type="checkbox" />
-                                        <span>{data.todo}</span>
-                                    </label>
-                                    <StyledBtn data-testid="modify-button">수정</StyledBtn>
-                                    <StyledBtn data-testid="delete-button">삭제</StyledBtn>
-                                </li>        
+                                <form key={data.id} onSubmit={(e) => onUpdateHandler(e, data)}>
+                                    <li>
+                                        <label style={{marginRight: "10px"}}>
+                                            <input name="todoCheck" type="checkbox" checked={data.isCompleted} onChange={(e) => {
+                                                onUpdateHandler(e, data);
+                                                }} />
+                                            <span>{data.todo}</span>
+                                        </label>
+                                        <StyledBtn 
+                                            data-testid="modify-button"
+                                            type="submit"
+                                        >수정</StyledBtn>
+                                        <StyledBtn data-testid="delete-button">삭제</StyledBtn>
+                                    </li>
+                                </form>
                             )
                         })
                     }
