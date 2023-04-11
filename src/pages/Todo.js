@@ -14,6 +14,7 @@ export async function loader() {
 
 const Todo = () => {
     const [todoList, setTodoList] = useState([]);
+    const [refetch, setRefetch] = useState(true);
     const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
 
     useEffect(() => {
@@ -30,7 +31,7 @@ const Todo = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [refetch]);
     
     const onCreateHandler = async function(e) {
         try {
@@ -81,6 +82,22 @@ const Todo = () => {
         }
     }
 
+    const onDeleteHandler = async function(e, data) {
+        // e.preventDefault();
+        try {
+            const res = await API.delete(`/todos/${data.id}`, {
+                headers: {
+                    "Authorization": `Bearer ${access_token}`,
+                }
+            })
+            setRefetch(!refetch);
+            console.log(todoList);
+            console.log('delete', res);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     return (
         <Background>
             <Container>
@@ -101,16 +118,23 @@ const Todo = () => {
                                 <form key={data.id} onSubmit={(e) => onUpdateHandler(e, data)}>
                                     <li>
                                         <label style={{marginRight: "10px"}}>
-                                            <input name="todoCheck" type="checkbox" checked={data.isCompleted} onChange={(e) => {
-                                                onUpdateHandler(e, data);
-                                                }} />
+                                            <input 
+                                                name="todoCheck" 
+                                                type="checkbox" 
+                                                checked={data.isCompleted} 
+                                                onChange={(e) => onUpdateHandler(e, data)}
+                                            />
                                             <span>{data.todo}</span>
                                         </label>
                                         <StyledBtn 
                                             data-testid="modify-button"
                                             type="submit"
                                         >수정</StyledBtn>
-                                        <StyledBtn data-testid="delete-button">삭제</StyledBtn>
+                                        <StyledBtn 
+                                            data-testid="delete-button"
+                                            type="button"
+                                            onClick={(e) => onDeleteHandler(e, data)}
+                                        >삭제</StyledBtn>
                                     </li>
                                 </form>
                             )
