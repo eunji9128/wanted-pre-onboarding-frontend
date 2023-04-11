@@ -15,6 +15,7 @@ export async function loader() {
 const Todo = () => {
     const [todoList, setTodoList] = useState([]);
     const [refetch, setRefetch] = useState(true);
+    const [updateIdx, setupdateIdx] = useState([]);
     const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
 
     useEffect(() => {
@@ -25,13 +26,14 @@ const Todo = () => {
                     headers: {"Authorization": `Bearer ${access_token}`},
                 });
                 console.log('get: ', res.data);
+                setupdateIdx(new Array(res.data.length).fill(false));
                 setTodoList(res.data);
             } catch (err) {
                 console.error(err);
             }
         };
         fetchData();
-    }, [refetch]);
+    }, []);
     
     const onCreateHandler = async function(e) {
         try {
@@ -51,7 +53,7 @@ const Todo = () => {
         }
     };
 
-    const onUpdateHandler = async function(e, data) {
+    const onCheckHandler = async function(e, data) {
         e.preventDefault();
         const isCompleted = e.target.checked;
         console.log('todocheck: ', isCompleted);
@@ -83,7 +85,7 @@ const Todo = () => {
     }
 
     const onDeleteHandler = async function(e, data) {
-        // e.preventDefault();
+        e.preventDefault();
         try {
             const res = await API.delete(`/todos/${data.id}`, {
                 headers: {
@@ -93,6 +95,45 @@ const Todo = () => {
             setRefetch(!refetch);
             console.log(todoList);
             console.log('delete', res);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const updateChange = function (e, i) {
+        e.preventDefault();
+        let copy = [...updateIdx];
+        copy[i] = !copy[i];
+        setupdateIdx(copy);
+    }
+
+    const InputDataHandler = function (e, data) {
+        e.preventDefault();
+        setTodoList(todoList.map(todo => {
+            if(todo.id === data.id) {
+                return {
+                    ...todo,
+                    todo: e.target.value
+                }
+            }
+            return todo;
+        }));
+    }
+
+    const onUpdateHandler = async function (e, data) {
+        e.preventDefault();
+        try {
+            const res = await API.put(`/todos/${data.id}`, 
+                {
+                    todo: data.todo,
+                    isCompleted: data.isCompleted,
+                },
+                {
+                    headers: {
+                        "Authorization": `Bearer ${access_token}`,
+                    }
+                }
+            )
         } catch (err) {
             console.error(err);
         }
@@ -115,28 +156,56 @@ const Todo = () => {
                     {
                         todoList?.map(function (data, i) {
                             return (
-                                <form key={data.id} onSubmit={(e) => onUpdateHandler(e, data)}>
-                                    <li>
-                                        <label style={{marginRight: "10px"}}>
-                                            <input 
-                                                name="todoCheck" 
-                                                type="checkbox" 
-                                                checked={data.isCompleted} 
-                                                onChange={(e) => onUpdateHandler(e, data)}
-                                            />
-                                            <span>{data.todo}</span>
-                                        </label>
-                                        <StyledBtn 
-                                            data-testid="modify-button"
-                                            type="submit"
-                                        >수정</StyledBtn>
-                                        <StyledBtn 
-                                            data-testid="delete-button"
-                                            type="button"
-                                            onClick={(e) => onDeleteHandler(e, data)}
-                                        >삭제</StyledBtn>
-                                    </li>
-                                </form>
+                                <li key={data.id}>
+                                    <input 
+                                        name="todoCheck" 
+                                        type="checkbox" 
+                                        checked={data.isCompleted} 
+                                        onChange={(e) => onCheckHandler(e, data)}
+                                    />
+                                    {
+                                        !updateIdx[i] ?
+                                            <>
+                                                <span>{data.todo}</span>
+                                                <StyledBtn 
+                                                    data-testid="modify-button"
+                                                    type="button"
+                                                    onClick={(e) => updateChange(e, i)}
+                                                >
+                                                    수정
+                                                </StyledBtn>
+                                                <StyledBtn 
+                                                    data-testid="delete-button"
+                                                    type="button"
+                                                    onClick={(e) => onDeleteHandler(e, data)}
+                                                >삭제</StyledBtn>
+                                            </> :
+                                            <>  
+                                                <input 
+                                                    name="modifyInput"
+                                                    data-testid="modify-input"
+                                                    value={data.todo}
+                                                    onChange={(e)=>{InputDataHandler(e, data)}}
+                                                />
+                                                <StyledBtn
+                                                    data-testid="submit-button"
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        onUpdateHandler(e, data);
+                                                        updateChange(e, i);
+                                                    }}
+                                                >
+                                                    제출
+                                                </StyledBtn>
+                                                <StyledBtn
+                                                    data-testid="cancel-button"
+                                                    type="button"
+                                                >
+                                                    취소
+                                                </StyledBtn>
+                                            </>
+                                    }
+                                </li>
                             )
                         })
                     }
