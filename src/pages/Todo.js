@@ -33,7 +33,7 @@ const Todo = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [refetch]);
     
     const onCreateHandler = async function(e) {
         try {
@@ -100,8 +100,9 @@ const Todo = () => {
         }
     }
 
-    const updateChange = function (e, i) {
+    const updateChange = function (e, i, update) {
         e.preventDefault();
+        if (!update) setRefetch(!refetch);
         let copy = [...updateIdx];
         copy[i] = !copy[i];
         setupdateIdx(copy);
@@ -170,7 +171,7 @@ const Todo = () => {
                                                 <StyledBtn 
                                                     data-testid="modify-button"
                                                     type="button"
-                                                    onClick={(e) => updateChange(e, i)}
+                                                    onClick={(e) => updateChange(e, i, true)}
                                                 >
                                                     수정
                                                 </StyledBtn>
@@ -192,7 +193,7 @@ const Todo = () => {
                                                     type="button"
                                                     onClick={(e) => {
                                                         onUpdateHandler(e, data);
-                                                        updateChange(e, i);
+                                                        updateChange(e, i, true);
                                                     }}
                                                 >
                                                     제출
@@ -200,6 +201,9 @@ const Todo = () => {
                                                 <StyledBtn
                                                     data-testid="cancel-button"
                                                     type="button"
+                                                    onClick={(e) => {
+                                                        updateChange(e, i, false);
+                                                    }}
                                                 >
                                                     취소
                                                 </StyledBtn>
