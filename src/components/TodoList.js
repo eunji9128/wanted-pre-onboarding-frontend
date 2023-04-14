@@ -9,6 +9,7 @@ const TodoList = function (props) {
     const setRefetch=props.setRefetch;
     const updateIdx=props.updateIdx;
     const setUpdateIdx=props.setUpdateIdx;
+    const access_token=props.access_token;
     
     return (
         <Box>
@@ -20,7 +21,7 @@ const TodoList = function (props) {
                                 name="todoCheck"
                                 type="checkbox"
                                 checked={data.isCompleted}
-                                onChange={(e) => onCheckHandler(e, data, todoList, setTodoList)}
+                                onChange={(e) => onCheckHandler(e, data, todoList, setTodoList, access_token)}
                             />
                             {
                                 !updateIdx[i] ?
@@ -36,7 +37,7 @@ const TodoList = function (props) {
                                         <StyledBtn
                                             data-testid="delete-button"
                                             type="button"
-                                            onClick={(e) => onDeleteHandler(e, data, refetch, setRefetch)}
+                                            onClick={(e) => onDeleteHandler(e, data, refetch, setRefetch, access_token)}
                                         >삭제</StyledBtn>
                                     </> :
                                     <>
@@ -50,7 +51,7 @@ const TodoList = function (props) {
                                             data-testid="submit-button"
                                             type="button"
                                             onClick={(e) => {
-                                                onUpdateHandler(e, data);
+                                                onUpdateHandler(e, data, access_token);
                                                 dataRefetchControl(e, i, true, updateIdx, setUpdateIdx, refetch, setRefetch);
                                             }}
                                         >

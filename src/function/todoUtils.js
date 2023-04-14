@@ -1,9 +1,19 @@
 import API from "../api/axios";
 
-const access_token = JSON.parse(localStorage.getItem("active_user"))?.jwt;
+// const access_token = JSON.parse(localStorage.getItem("active_user"))?.jwt;
+
+const userLoginVerifier = function() {
+    const active_user = JSON.parse(localStorage.getItem("active_user"));
+    if (!active_user) {
+        console.error("User is not logged in");
+        return;
+    }
+    return active_user.jwt;
+}
 
 export const fetchData = async (setUpdateState, setTodoState) => {
     try {
+        const access_token = userLoginVerifier();
         const res = await API.get('/todos', {
             headers: {"Authorization": `Bearer ${access_token}`},
         });
@@ -17,6 +27,7 @@ export const fetchData = async (setUpdateState, setTodoState) => {
 
 export const onCreateHandler = async function(e, refetchState, setRefetchState) {
     try {
+        const access_token = userLoginVerifier();
         const res = await API.post("/todos",
             {
                 todo: e.target.newinput.value,
@@ -39,6 +50,7 @@ export const onCheckHandler = async function(e, data, todoState, setTodoState) {
     const isCompleted = e.target.checked;
     console.log('todocheck: ', isCompleted);
     try {
+        const access_token = userLoginVerifier();
         const res = await API.put(`/todos/${data.id}`, 
             {
                 todo: data.todo,
@@ -68,6 +80,7 @@ export const onCheckHandler = async function(e, data, todoState, setTodoState) {
 export const onUpdateHandler = async function (e, data) {
     e.preventDefault();
     try {
+        const access_token = userLoginVerifier();
         const res = await API.put(`/todos/${data.id}`, 
             {
                 todo: data.todo,
@@ -87,6 +100,7 @@ export const onUpdateHandler = async function (e, data) {
 export const onDeleteHandler = async function(e, data, refetchState, setRefetchState) {
     e.preventDefault();
     try {
+        const access_token = userLoginVerifier();
         const res = await API.delete(`/todos/${data.id}`, {
             headers: {
                 "Authorization": `Bearer ${access_token}`,
