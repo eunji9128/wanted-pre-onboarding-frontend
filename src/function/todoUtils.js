@@ -1,6 +1,6 @@
 import API from "../api/axios";
 
-const access_token = JSON.parse(localStorage.getItem("active_user")).jwt;
+const access_token = JSON.parse(localStorage.getItem("active_user"))?.jwt;
 
 export const fetchData = async (setUpdateState, setTodoState) => {
     try {

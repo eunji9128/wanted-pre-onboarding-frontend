@@ -9,33 +9,41 @@ import reportWebVitals from './reportWebVitals';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 
+const basename = process.env.PUBLIC_URL;
 const root = ReactDOM.createRoot(document.getElementById('root'));
-const router = createBrowserRouter([
+const routes = [
   {
-    path: "/",
+    path: '/',
     element: <App />,
-    errorElement: <ErrorPage />,
+    loader: null,
   },
   {
-    path: "signup",
+    path: '/signup',
     element: <Signup />,
     loader: signupLoader,
   },
   {
-    path: "signin",
+    path: '/signin',
     element: <Signin />,
     loader: signinLoader,
   },
   {
-    path: "todo",
+    path: '/todo',
     element: <Todo />,
     loader: todoLoader,
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
+    loader: null,
   }
-]);
+];
+
+const router = createBrowserRouter(routes, {basename: basename});
 
 root.render(
   // <React.StrictMode>
-    <RouterProvider router={router}/>
+  <RouterProvider router={router} />
   // </React.StrictMode>
 );
 

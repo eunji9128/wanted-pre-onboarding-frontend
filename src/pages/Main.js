@@ -32,7 +32,7 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('/main-background.jpg');
+    background-image: url(${process.env.PUBLIC_URL}/main-background.jpg);
     background-size: cover;
     background-repeat: no-repeat;
 `
