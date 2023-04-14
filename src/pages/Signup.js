@@ -44,6 +44,7 @@ const Signup = () => {
             navigate('/signin');
         } catch(error) {
             console.error(error.response);
+            alert(error.response.data.message);
         }
     }
 
@@ -85,7 +86,7 @@ const Signup = () => {
 
 const Background = styled.div`
     width: 100vw;
-    height: 100%;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
