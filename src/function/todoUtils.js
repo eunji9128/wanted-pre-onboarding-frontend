@@ -15,7 +15,7 @@ export const fetchData = async (setUpdateState, setTodoState) => {
     }
 };
 
-export const onCreateHandler = async function(e) {
+export const onCreateHandler = async function(e, refetchState, setRefetchState) {
     try {
         const res = await API.post("/todos",
             {
@@ -27,6 +27,7 @@ export const onCreateHandler = async function(e) {
                 },
             }
         );
+        setRefetchState(!refetchState);
         console.log('create: ', res);
     } catch (err) {
         console.error(err);

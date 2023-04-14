@@ -25,7 +25,7 @@ const Todo = () => {
     return (
         <Background>
             <Container>
-                <form onSubmit={onCreateHandler}>
+                <form onSubmit={(e) => onCreateHandler(e, refetch, setRefetch)}>
                     <input 
                         name="newinput"
                         data-testid="new-todo-input"
